@@ -1,0 +1,1 @@
+export async function toPDF(){const {jsPDF}=await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');const doc=new jsPDF();doc.html(document.getElementById('panel'),{callback:()=>doc.save('oncoguia.pdf')});}

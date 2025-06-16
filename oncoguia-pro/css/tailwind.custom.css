@@ -1,0 +1,4 @@
+/* Custom overrides here */
+.header-gradient{background:linear-gradient(135deg,#DC143C 0%,#B91C1C 100%);}
+.tab-active{background:#DC143C;color:#fff;}
+.tab-inactive{background:#f9fafb;color:#6b7280;}

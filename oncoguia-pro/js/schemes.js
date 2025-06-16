@@ -1,0 +1,1 @@
+export const schemes = {folfiri:{name:'FOLFIRI',indication:'Ca colorrectal mtx',drugs:[{name:'Irinotecán',dose:'180 mg/m²',day:'D1',infusion:'90 min',solution:'D5%'},{name:'Leucovorina',dose:'400 mg/m²',day:'D1',infusion:'120 min',solution:'SF'}],cycle:'q14d',premedication:'Ondansetrón 8mg IV',specialNotes:'Monitoreo diarrea',emetogenicity:'Moderado'}};

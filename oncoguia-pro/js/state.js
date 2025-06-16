@@ -1,0 +1,1 @@
+export const state = new Proxy({patient:{name:'',age:null,gender:'',weight:null,height:null,creatinine:null},ui:{currentTab:'indicaciones',theme:localStorage.getItem('oncoguia-theme')||'light'}},{set(t,p,v){const r=Reflect.set(t,p,v);document.dispatchEvent(new CustomEvent('statechange',{detail:{prop:p}}));return r;}});
