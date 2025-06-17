@@ -1,34 +1,156 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OncoGuía Pro · OncoTech</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/tailwind.custom.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoGuía Pro v12.0 - OncoTech La Paz</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/main.js" type="module" defer></script>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
-  <header class="header-gradient text-white p-4 flex justify-between items-center shadow-md">
-    <div class="flex items-center space-x-4">
-      <img src="https://www.jotform.com/uploads/jeanp27/form_files/Logo%20para%20membrete.684c557f007857.92019324.png" alt="OncoTech Logo" class="h-12">
-      <div>
-        <h1 class="text-2xl font-bold">OncoGuía Pro</h1>
-        <p class="text-sm opacity-80">Sistema Avanzado de Indicaciones Oncológicas</p>
-      </div>
+<body>
+    <div id="notification-container"></div>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo-container">
+                    <img src="assets/onco-logo.png" alt="OncoTech Logo" class="logo">
+                    <div class="logo-decoration"></div>
+                    <div class="header-info">
+                        <h1>OncoGuía Pro</h1>
+                        <p>v12.0 - Indicaciones Oncológicas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="clinic-info">
+                    <strong>OncoTech - Centro de Oncología</strong>
+                    <span>La Paz, BCS</span>
+                </div>
+                <div class="theme-selector-container">
+                    <i class="fa-solid fa-palette"></i>
+                    <select id="themeSelector" class="theme-selector">
+                        <option value="light">Tema Claro</option>
+                        <option value="dark">Tema Oscuro</option>
+                        <option value="medical-green">Verde Médico</option>
+                        <option value="professional-blue">Azul Profesional</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <main class="main-content">
+            <section id="patient-data-section" class="patient-data fade-in">
+                <form id="patientForm" class="patient-form">
+                    <div class="form-group-span-2">
+                        <label for="patientName" class="required">Nombre Completo</label>
+                        <input type="text" id="patientName" placeholder="Nombre del paciente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patientAge" class="required">Edad</label>
+                        <input type="number" id="patientAge" min="0" max="120" placeholder="Años" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patientGender" class="required">Sexo</label>
+                        <select id="patientGender" required>
+                            <option value="" disabled selected>Seleccionar...</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="patientWeight" class="required">Peso (kg)</label>
+                        <input type="number" id="patientWeight" min="20" max="300" step="0.1" placeholder="kg" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patientHeight" class="required">Estatura (cm)</label>
+                        <input type="number" id="patientHeight" min="100" max="250" placeholder="cm" required>
+                    </div>
+                    <div class="form-group-span-2">
+                        <label for="patientDiagnosis">Diagnóstico Principal</label>
+                        <input type="text" id="patientDiagnosis" placeholder="Ej: Adenocarcinoma de colon etapa III">
+                    </div>
+                    <div class="form-group">
+                        <label for="patientCreatinine">Creatinina (mg/dL)</label>
+                        <input type="number" id="patientCreatinine" min="0.1" max="15" step="0.1" placeholder="mg/dL">
+                    </div>
+                    <div class="calculations">
+                        <div class="calculation-item" data-tooltip="Superficie Corporal (Mosteller)">
+                            <span class="calculation-label">SC</span>
+                            <span class="calculation-value" id="bsaValue">-- m²</span>
+                        </div>
+                        <div class="calculation-item" data-tooltip="Índice de Masa Corporal">
+                            <span class="calculation-label">IMC</span>
+                            <span class="calculation-value" id="bmiValue">--</span>
+                        </div>
+                        <div class="calculation-item" data-tooltip="Depuración de Creatinina (Cockcroft-Gault)">
+                            <span class="calculation-label">ClCr</span>
+                            <span class="calculation-value" id="clcrValue">-- mL/min</span>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <section class="controls-tabs-section fade-in" style="animation-delay: 0.1s;">
+                <div class="tab-navigation">
+                    <div class="tab-buttons">
+                        <button class="tab-button active" data-tab="schemes"><i class="fa-solid fa-syringe"></i>Esquemas</button>
+                        <button class="tab-button" data-tab="requests"><i class="fa-solid fa-vial"></i>Solicitudes</button>
+                        <button class="tab-button" data-tab="prescriptions"><i class="fa-solid fa-pills"></i>Recetas</pre>
+                        <button class="tab-button" data-tab="guides"><i class="fa-solid fa-book-medical"></i>Guías</button>
+                    </div>
+                </div>
+
+                <div class="tab-content-area">
+                    <div class="tab-content active" data-content="schemes">
+                        <div class="form-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="schemeSearch">Buscar Esquema</label>
+                                    <input type="text" id="schemeSearch" placeholder="Ej: FOLFOX, Mama, etc.">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cycleNumber">Número de Ciclo</label>
+                                    <input type="number" id="cycleNumber" value="1" min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="scheme-grid" class="scheme-grid">
+                            </div>
+                    </div>
+                    </div>
+            </section>
+        </main>
+
+        <aside class="preview-panel-container">
+            <div class="preview-area">
+                <div class="preview-header">
+                    <h2 class="preview-title">Vista Previa del Documento</h2>
+                    <div class="export-buttons">
+                        <button id="printPdfBtn" class="btn btn-secondary btn-sm"><i class="fa-solid fa-file-pdf"></i>PDF</button>
+                        <button id="exportJsonBtn" class="btn btn-success btn-sm"><i class="fa-solid fa-download"></i>JSON</button>
+                    </div>
+                </div>
+                <div class="preview-content" id="previewContent">
+                    <div class="preview-placeholder">
+                        <i class="fa-solid fa-file-invoice"></i>
+                        <p>Complete los datos para generar el documento.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
-    <select id="themeSelector" class="no-print bg-white text-gray-800 px-3 py-1 rounded">
-      <option value="light">Modo claro</option>
-      <option value="dark">Modo oscuro</option>
-    </select>
-  </header>
-
-  <section id="form-paciente" class="m-4 grid grid-cols-6 gap-4"></section>
-  <section id="metrics" class="m-4 grid grid-cols-3 gap-4"></section>
-  <nav id="tabs" class="m-4 flex space-x-1" role="tablist"></nav>
-  <div id="actions" class="no-print flex space-x-2 m-4"></div>
-  <main id="panel" class="m-4"></main>
-
-  <script type="module" src="js/app.js"></script>
 </body>
 </html>
