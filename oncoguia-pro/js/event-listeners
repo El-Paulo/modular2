@@ -1,0 +1,81 @@
+// js/event-listeners.js
+// Configura todos los event listeners de la aplicación.
+
+import { DOMElements } from './dom-elements.js';
+import { setState, getState } from './state.js';
+import { selectSchemeCard } from './ui.js';
+import * as Calculations from './calculations.js';
+import * as Utils from './utils.js';
+
+/**
+ * Calcula todos los valores derivados de los datos del paciente y actualiza el estado.
+ */
+function handlePatientDataChange() {
+    const patient = {
+        name: DOMElements.patientName.value.trim(),
+        age: parseInt(DOMElements.patientAge.value) || 0,
+        gender: DOMElements.patientGender.value,
+        weight: parseFloat(DOMElements.patientWeight.value) || 0,
+        height: parseFloat(DOMElements.patientHeight.value) || 0,
+        diagnosis: DOMElements.patientDiagnosis.value.trim(),
+        creatinine: parseFloat(DOMElements.patientCreatinine.value) || 0,
+    };
+
+    const calculations = {
+        bsa: Calculations.calculateBSA(patient.weight, patient.height),
+        bmi: Calculations.calculateBMI(patient.weight, patient.height),
+        clcr: Calculations.calculateClCr(patient.age, patient.weight, patient.creatinine, patient.gender),
+    };
+    
+    // Expone el estado del paciente globalmente para cálculos dependientes.
+    // Esto es una solución simple; una mejor sería pasar el estado a donde se necesite.
+    window.appState = { patient }; 
+
+    setState({ patient, calculations });
+}
+
+/**
+ * Configura todos los listeners para la aplicación.
+ */
+export function setupEventListeners() {
+    // Listener para el formulario de paciente
+    DOMElements.patientForm.addEventListener('input', handlePatientDataChange);
+
+    // Listener para cambiar el tema
+    DOMElements.themeSelector.addEventListener('change', (e) => {
+        document.documentElement.setAttribute('data-theme', e.target.value);
+    });
+
+    // Listeners para las pestañas de navegación
+    DOMElements.tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            setState({ ui: { activeTab: button.dataset.tab } });
+        });
+    });
+
+    // Listener para la búsqueda de esquemas
+    DOMElements.schemeSearch.addEventListener('input', (e) => {
+        setState({ ui: { schemeSearchTerm: e.target.value } });
+    });
+
+    // Listener para seleccionar un esquema (usando delegación de eventos)
+    DOMElements.schemeGrid.addEventListener('click', (e) => {
+        const card = e.target.closest('.scheme-card');
+        if (card) {
+            const schemeName = card.dataset.schemeName;
+            setState({ ui: { selectedScheme: schemeName } });
+            selectSchemeCard(schemeName); // Actualización visual inmediata
+        }
+    });
+
+    // Listener para el número de ciclo
+    DOMElements.cycleNumber.addEventListener('input', (e) => {
+        setState({ ui: { cycleNumber: parseInt(e.target.value) || 1 } });
+    });
+
+    // Listeners para los botones de exportación
+    DOMElements.printPdfBtn.addEventListener('click', Utils.exportPreviewToPdf);
+    DOMElements.exportJsonBtn.addEventListener('click', () => {
+        Utils.exportStateAsJson(getState());
+    });
+}
